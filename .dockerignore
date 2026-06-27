@@ -1,0 +1,8 @@
+.git
+**/node_modules
+auth-server
+loadbalancer
+client/blobfuscator/node_modules
+client/dist
+*.md
+preview.png

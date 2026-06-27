@@ -21,8 +21,10 @@ TODO:
 };*/
 
 
+// Single self-hosted region: the server serves both the client and the
+// WebSocket on this same origin, so the region simply points back here.
 export const Servers = {
-    "Frankfurt": "https://fra1.blobl.io",
+    "Main": window.location.origin,
 };
 
 export const MessageTypes = {

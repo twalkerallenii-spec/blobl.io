@@ -50,29 +50,16 @@ export default class Network {
     async connect () {
         if (this.isDev) {
             // Development mode: Connect to localhost
-            this.serverAddress = 'localhost:8080';
+            this.serverAddress = 'localhost:8080/ffa1';
             this.worker.postMessage({ type: 'connect', data: `ws://${this.serverAddress}` });
 
         } else {
-            // Production mode: Fetch server address and connect
-            const response = await fetch(`${this.loadBalancerAddress}/get-server`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch server address');
-            }
-
-            const data = await response.json();
-            if (!data.server_address) {
-                throw new Error('Server address not found in response');
-            }
-
-            this.serverAddress = data.server_address;
-            this.worker.postMessage({ type: 'connect', data: `wss://${this.serverAddress}` });
+            // Production mode: the game server serves this client and the
+            // WebSocket on the same origin, so connect directly to the
+            // current host. (No external load balancer needed.)
+            const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
+            this.serverAddress = `${window.location.host}/ffa1`;
+            this.worker.postMessage({ type: 'connect', data: `${proto}://${this.serverAddress}` });
         }
     }
 

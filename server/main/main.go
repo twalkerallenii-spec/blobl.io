@@ -169,20 +169,33 @@ func main() {
 
 	game.Start()
 
-	// Define WebSocket endpoint handlers with session checks
-	http.HandleFunc("/", wsEndpoint)
+	// WebSocket game endpoints (rooms). Each path is a game instance.
 	http.HandleFunc("/ffa1", wsEndpoint)
 	http.HandleFunc("/ffa2", wsEndpoint)
 
 	http.HandleFunc("/playercount", playerCountHandler)
 	http.HandleFunc("/reboot", serverRebootHandler)
 
-	// Log server start
-	address := fmt.Sprintf("localhost:%s", PORT)
-	log.Printf("Blobl.io Server starting on %s\n", address)
+	// Lightweight health/latency endpoint used by the client region picker.
+	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("pong"))
+	})
 
-	// Start the server
-	if err := http.ListenAndServe("localhost:"+PORT, nil); err != nil {
+	// Serve the browser client as static files. CLIENT_DIR lets the
+	// container override the location; default works for local `go run`.
+	clientDir := os.Getenv("CLIENT_DIR")
+	if clientDir == "" {
+		clientDir = "../../client"
+	}
+	http.Handle("/", http.FileServer(http.Dir(clientDir)))
+
+	// Bind on all interfaces so the service is reachable in containers.
+	address := ":" + PORT
+	log.Printf("Blobl.io server starting on %s (client dir: %s)\n", address, clientDir)
+
+	if err := http.ListenAndServe(address, nil); err != nil {
 		log.Fatal(err)
 	}
 }
