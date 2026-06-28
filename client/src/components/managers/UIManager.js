@@ -391,6 +391,8 @@ export default class UIManager {
     }
 
     async updateAccount () {
+        // Account/skin UI was removed; skip if the elements are absent.
+        if (!this.DOM.account || !this.DOM.account.handle) return;
         const MAX_LEVEL = 40;
 
         // Default values in case userData is null or incomplete
@@ -550,6 +552,8 @@ export default class UIManager {
     }
 
     async setupRegionSelect () {
+        // Region selector was removed (single self-hosted server); skip if absent.
+        if (!this.DOM.menu.regionSelect) return;
         // Populate the region-select dropdown with the servers from the Servers object
         Object.keys(Servers).forEach(regionKey => {
             const option = document.createElement("option");
@@ -1282,6 +1286,7 @@ export default class UIManager {
     }
 
     showSkinLibraryDialog (show) {
+        if (!this.DOM.skins.libraryDialog) return;
         this.DOM.skins.libraryDialog.style.display = show ? "flex" : "none";
     }
 
@@ -1406,6 +1411,7 @@ export default class UIManager {
     }
 
     showLoginDialog (show) {
+        if (!this.DOM.account.loginDialog) return;
         this.DOM.account.loginDialog.style.display = show ? "flex" : "none";
     }
 

@@ -659,17 +659,21 @@ img {
 .loading-overlay {
   position: fixed;
   display: flex;
-  height: 100vh;
-  width: 100vw;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 99;
-  background-color: #00000065;
+  padding: 8px 20px;
+  border-radius: 10px;
+  background-color: #000000aa;
   justify-content: center;
   align-items: center;
   color: #ffffff;
-  font-size: 50px;
+  font-size: 22px;
   font-weight: 700;
   gap: 2px;
-  -webkit-text-stroke: 3px #464646;
+  pointer-events: none;
+  -webkit-text-stroke: 1px #464646;
 }
 
 @keyframes wave {
