@@ -23,8 +23,10 @@ TODO:
 
 // Single self-hosted region: the server serves both the client and the
 // WebSocket on this same origin, so the region simply points back here.
+// NOTE: this module is also imported by the network Web Worker, which has no
+// `window` — use the global `location` (available in both window and worker).
 export const Servers = {
-    "Main": window.location.origin,
+    "Main": (typeof location !== "undefined" && location.origin) ? location.origin : "",
 };
 
 export const MessageTypes = {

@@ -75,26 +75,9 @@ export default class NetworkManager {
     }
 
     async checkLoginStatus () {
-        try {
-            const response = await fetch("https://auth.blobl.io/check", {
-                method: "GET",
-                credentials: "include"
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to verify login status");
-            }
-
-            const data = await response.json();
-            if (data.loggedIn) {
-                this.loggedIn = true;
-            } else {
-                console.log("User is not logged in.")
-            }
-        } catch (error) {
-            console.error("Error checking login status:", error);
-            // Handle errors appropriately, such as showing a login page
-        }
+        // This self-hosted build has no auth server, so everyone plays as a
+        // guest. (Avoids a failing fetch to the original, now-offline host.)
+        this.loggedIn = false;
         this.core.uiManager.updateAccountButton();
     }
 
