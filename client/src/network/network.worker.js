@@ -156,6 +156,7 @@ function decodePayload (messageType, payload) {
         [MessageTypes.BULLET_POSITION_UPDATE]: decodeBulletPositionUpdate,
         [MessageTypes.LEADERBOARD_UPDATE]: decodeLeaderboardUpdate,
         [MessageTypes.REMOVE_SPAWN_PROTECTION]: decodeRemoveSpawnProtection,
+        [MessageTypes.POWERUP_ACTIVATED]: decodePowerupActivated,
         [MessageTypes.CHAT_MESSAGE]: decodeChatMessage,
         [MessageTypes.BUILDING_PLACEMENT_FAILED]: decodeBuildingPlacementFailed,
         [MessageTypes.INITIAL_BULLET_STATES]: decodeInitialBulletStates,
@@ -881,6 +882,14 @@ function decodeRemoveSpawnProtection (payload) {
     const dataView = new DataView(payload);
     const playerID = dataView.getUint8(0);
     return { playerID }
+}
+
+function decodePowerupActivated (payload) {
+    const dataView = new DataView(payload);
+    const playerID = dataView.getUint8(0);
+    const powerupType = dataView.getUint8(1);
+    const durationMs = dataView.getUint16(2, false); // big-endian
+    return { playerID, powerupType, durationMs }
 }
 
 function decodeInitialPlayerData (payload) {

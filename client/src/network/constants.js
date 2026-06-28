@@ -68,11 +68,31 @@ export const MessageTypes = {
     BUY_COMMANDER: 39,
     CLIENT_REQUEST_SKIN_DATA: 40,
     SKIN_DATA: 41,
+    CLIENT_BUY_SHOP_ITEM: 42,
+    POWERUP_ACTIVATED: 43,
     HEARTBEAT: 69,
     SERVER_VERSION: 98,
     REBOOT_ALERT: 99,
     ERROR: 100
 };
+
+// Powerup type identifiers. Must match server/game/powerup.go.
+export const PowerupTypes = {
+    OVERDRIVE: 0,
+    WAR_CRY: 1,
+    BULWARK: 2,
+    REPAIR_SURGE: 3,
+};
+
+// Shop catalog for display. The `id` is sent to the server in a buy message;
+// costs/durations are authoritative on the server (server/game/powerup.go) and
+// mirrored here only for the UI. Keep ids/costs/durations in sync.
+export const ShopItems = [
+    { id: 0, powerup: PowerupTypes.OVERDRIVE, name: "Overdrive", icon: "⚡", cost: 3000, durationMs: 30000, description: "+50% power generation" },
+    { id: 1, powerup: PowerupTypes.WAR_CRY, name: "War Cry", icon: "🗡️", cost: 4000, durationMs: 20000, description: "+30% unit bullet damage" },
+    { id: 2, powerup: PowerupTypes.BULWARK, name: "Bulwark", icon: "🛡️", cost: 5000, durationMs: 10000, description: "Temporary invulnerability" },
+    { id: 3, powerup: PowerupTypes.REPAIR_SURGE, name: "Repair Surge", icon: "🔧", cost: 6000, durationMs: 0, description: "Instantly fully repair your base" },
+];
 
 export const BuildingSizes = {
     WALL: { size: 30 },

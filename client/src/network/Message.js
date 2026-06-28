@@ -63,6 +63,12 @@ export default class Message {
         return new Message(MessageTypes.CLIENT_REQUEST_SKIN_DATA, payload);
     }
 
+    static createBuyShopItemMessage (itemId) {
+        const payload = new Uint8Array(1);
+        payload[0] = itemId;
+        return new Message(MessageTypes.CLIENT_BUY_SHOP_ITEM, payload);
+    }
+
     static createPlaceBuildingMessage (buildingType, position) {
         // Create a buffer to hold the payload
         // 1 byte for buildingType, 4 bytes for x (float32), and 4 bytes for y (float32)

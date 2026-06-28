@@ -48,6 +48,8 @@ func handleMessage(conn *websocket.Conn, message []byte) {
 		handleBuyCommander(conn, payload)
 	case MessageTypeClientBuyRepair:
 		handleBuyRepair(conn, payload)
+	case MessageTypeClientBuyShopItem:
+		handleBuyShopItem(conn, payload)
 	case MessageTypeClientCameraUpdate:
 		handleCameraUpdate(conn, payload)
 	case MessageTypeClientRequestResync:
@@ -929,6 +931,51 @@ func handleBuyRepair(conn *websocket.Conn, payload []byte) {
 
 	player.Base.Repair()
 	broadcastBaseHealthUpdate(player.Base)
+}
+
+// handleBuyShopItem validates Power cost and applies a purchased powerup.
+func handleBuyShopItem(conn *websocket.Conn, payload []byte) {
+	if len(payload) != 1 {
+		log.Println("Invalid payload length for buying shop item")
+		return
+	}
+
+	player, ok := game.GetPlayerByConn(conn)
+	if !ok {
+		log.Println("Player not found for connection")
+		return
+	}
+
+	if player.IsMarkedForRemoval() {
+		return
+	}
+
+	item, ok := game.ShopItems[payload[0]]
+	if !ok {
+		log.Printf("Unknown shop item ID: %d", payload[0])
+		return
+	}
+
+	// Authoritative cost check; aborts if the player cannot afford it.
+	if !player.Resources.Power.Decrement(item.Cost) {
+		return
+	}
+
+	duration := time.Duration(item.DurationMs) * time.Millisecond
+
+	switch item.Powerup {
+	case game.PowerupOverdrive:
+		player.ActivateOverdrive(duration)
+	case game.PowerupWarCry:
+		player.ActivateWarCry(duration)
+	case game.PowerupBulwark:
+		player.ActivateBulwark(duration)
+	case game.PowerupRepairSurge:
+		player.Base.Repair()
+		broadcastBaseHealthUpdate(player.Base)
+	}
+
+	broadcastPowerupActivated(player.ID, item.Powerup, item.DurationMs)
 }
 
 func handleCameraUpdate(conn *websocket.Conn, payload []byte) {

@@ -1339,6 +1339,7 @@ export default class UIManager {
         this.showChat(show);
         this.showMetrics(show);
         this.showMiniMap(show);
+        if (this.core.shopManager) this.core.shopManager.setVisible(show);
     }
 
     showGameOverUIElements (show) {

@@ -41,6 +41,11 @@ type Player struct {
 	SpawnProtectionEndTime time.Time
 	HasSpawnProtection     bool
 
+	// Powerups (timed buffs purchased from the shop)
+	OverdriveEndTime time.Time
+	WarCryEndTime    time.Time
+	BulwarkEndTime   time.Time
+
 	// Unit
 	AvailableUnitIDs   *AvailableIDs
 	Units              map[ID]*Unit

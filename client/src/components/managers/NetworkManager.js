@@ -244,6 +244,7 @@ export default class NetworkManager {
             [MessageTypes.BULLET_POSITION_UPDATE, () => this.handleBulletPositionUpdate(payload)],
             [MessageTypes.LEADERBOARD_UPDATE, () => this.handleLeaderboardUpdate(payload)],
             [MessageTypes.REMOVE_SPAWN_PROTECTION, () => this.handleRemoveSpawnProtection(payload)],
+            [MessageTypes.POWERUP_ACTIVATED, () => this.handlePowerupActivated(payload)],
             [MessageTypes.CHAT_MESSAGE, () => this.handleChatMessage(payload)],
             [MessageTypes.BUILDING_PLACEMENT_FAILED, () => this.handleBuildingPlacementFailed(payload)],
             [MessageTypes.INITIAL_BULLET_STATES, () => this.handleInitialBulletStates(payload)],
@@ -975,6 +976,13 @@ export default class NetworkManager {
         }
     }
 
+    handlePowerupActivated (payload) {
+        const { playerID, powerupType, durationMs } = payload;
+        const player = this.core.gameManager.getPlayerById(playerID);
+        if (!player) return;
+        this.core.shopManager.onPowerupActivated(player, powerupType, durationMs);
+    }
+
     // Send a message to the server
     sendMessage (message) {
         if (message instanceof Message) {
@@ -994,6 +1002,11 @@ export default class NetworkManager {
 
     placeBuilding (buildingType, position) {
         const message = Message.createPlaceBuildingMessage(buildingType, position);
+        this.sendMessage(message);
+    }
+
+    buyShopItem (itemId) {
+        const message = Message.createBuyShopItemMessage(itemId);
         this.sendMessage(message);
     }
 

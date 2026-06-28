@@ -8,6 +8,7 @@ import InputManager from "./managers/InputManager.js";
 import GameManager from "./managers/GameManager.js";
 import UIManager from "./managers/UIManager.js";
 import { BuildingManager, Buildings } from "./managers/BuildingManager.js";
+import ShopManager from "./managers/ShopManager.js";
 import Player from "../entities/Player.js";
 import Leaderboard from "./Leaderboard.js";
 import { BuildingVariantTypes, UnitVariantTypes } from "../network/constants.js";
@@ -194,6 +195,7 @@ export default class Core {
         this.buildingManager = new BuildingManager(this);
         this.eventManager = new EventManager(this);
         this.unitManager = new UnitMananger(this);
+        this.shopManager = new ShopManager(this);
     }
 
     createCanvas () {

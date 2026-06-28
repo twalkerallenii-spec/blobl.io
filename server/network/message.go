@@ -48,6 +48,8 @@ const (
 	MessageTypeClientBuyCommander       byte = 39
 	MessageTypeClientRequestSkinData    byte = 40
 	MessageTypeSkinData                 byte = 41
+	MessageTypeClientBuyShopItem        byte = 42 // Client buys a shop item (ShopItemID: 1 byte)
+	MessageTypePowerupActivated         byte = 43 // Powerup activated (PlayerID: 1 byte, PowerupType: 1 byte, DurationMs: 2 bytes)
 	MessageTypeHeartbeat                byte = 69
 	MessageTypeServerVersion            byte = 98
 	MessageTypeRebootAlertMessage       byte = 99

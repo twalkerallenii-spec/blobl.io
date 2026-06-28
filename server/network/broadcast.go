@@ -681,6 +681,20 @@ func broadcastRemoveSpawnProtection(playerID game.ID) {
 	broadcastToAll(EncodeMessage(message))
 }
 
+// broadcastPowerupActivated tells all clients a player activated a powerup so
+// they can show the icon/glow. The client self-expires it after durationMs.
+func broadcastPowerupActivated(playerID game.ID, powerup game.PowerupType, durationMs uint16) {
+	message := Message{
+		Type: MessageTypePowerupActivated,
+	}
+	buffer := new(bytes.Buffer)
+	buffer.WriteByte(byte(playerID))
+	buffer.WriteByte(byte(powerup))
+	binary.Write(buffer, binary.BigEndian, durationMs)
+	message.Payload = buffer.Bytes()
+	broadcastToAll(EncodeMessage(message))
+}
+
 func broadcastLeaderboardUpdate(changes *[]game.LeaderboardEntry) {
 	message := Message{
 		Type: MessageTypeLeaderboardUpdate,

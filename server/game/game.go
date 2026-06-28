@@ -111,6 +111,10 @@ func startResourceUpdateLoop() {
 		State.RLock()
 		for _, player := range State.Players {
 			generatingPower := player.GetGenerating().Power
+			// Overdrive powerup boosts power generation.
+			if player.HasOverdrive() {
+				generatingPower = uint16(float32(generatingPower) * OverdrivePowerMultiplier)
+			}
 			player.Resources.Power.Increment(generatingPower)
 
 			numNeutralBases := len(player.CapturedNeutralBases)
@@ -340,6 +344,7 @@ func processPlayerUnitTurrets(player *Player, duration time.Duration, players []
 				closestUnitPosition := closestUnit.GetPosition()
 				bullet, ok := player.Base.AddBullet(spawning, closestUnitPosition, 0)
 				if ok {
+					applyWarCry(player, bullet)
 					TriggerUnitBulletSpawnEvent(player, bullet, unit)
 				} else {
 					log.Println("Could not add bullet to player")
@@ -353,6 +358,7 @@ func processPlayerUnitTurrets(player *Player, duration time.Duration, players []
 				closedBuildingPosition := closestBuilding.GetPosition()
 				bullet, ok := player.Base.AddBullet(spawning, closedBuildingPosition, 0)
 				if ok {
+					applyWarCry(player, bullet)
 					TriggerUnitBulletSpawnEvent(player, bullet, unit)
 				} else {
 					log.Println("Could not add bullet to player")
@@ -366,6 +372,7 @@ func processPlayerUnitTurrets(player *Player, duration time.Duration, players []
 				closedBuildingPosition := closestBuilding.GetPosition()
 				bullet, ok := player.Base.AddBullet(spawning, closedBuildingPosition, 0)
 				if ok {
+					applyWarCry(player, bullet)
 					TriggerUnitBulletSpawnEvent(player, bullet, unit)
 				} else {
 					log.Println("Could not add bullet to player")
@@ -381,7 +388,7 @@ func findClosestUnitInRange(spawning *BulletSpawning, players []*Player, exclude
 	minDistance := float32(math.MaxFloat32)
 
 	for _, otherPlayer := range players {
-		if excludePlayer == otherPlayer || otherPlayer.IsMarkedForRemoval() || otherPlayer.HasProtection() {
+		if excludePlayer == otherPlayer || otherPlayer.IsMarkedForRemoval() || otherPlayer.IsInvulnerable() {
 			continue
 		}
 
@@ -417,7 +424,7 @@ func findClosestBuildingInRange(spawning *BulletSpawning, player *Player, player
 	minDistance := float32(math.MaxFloat32)
 
 	for _, otherPlayer := range players {
-		if player == otherPlayer || otherPlayer.IsMarkedForRemoval() || otherPlayer.HasProtection() {
+		if player == otherPlayer || otherPlayer.IsMarkedForRemoval() || otherPlayer.IsInvulnerable() {
 			continue
 		}
 
@@ -880,7 +887,7 @@ func checkBaseCollisions(player *Player, players []*Player, units []*Unit) {
 			continue
 		}
 
-		hasSpawnProtection := otherPlayer.HasSpawnProtection
+		hasSpawnProtection := otherPlayer.HasSpawnProtection || otherPlayer.HasBulwark()
 		basePosition := otherPlayer.Base.Position
 
 		// Same player checks own units if left spawn protection
